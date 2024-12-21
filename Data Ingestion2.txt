@@ -1,0 +1,36 @@
+from bs4 import BeautifulSoup
+import requests
+from sentence_transformers import 
+SentenceTransformer
+import faiss
+# List of websites to scrape
+websites = ["https://www.uchicago.edu/", 
+"https://www.washington.edu/"]
+# Scrape website content
+content_chunks = []
+metadata = []
+for site in websites:
+ response = requests.get(site)
+ soup = BeautifulSoup(response.content, 
+'html.parser')
+ 
+ # Extract text from relevant tags
+ paragraphs = [p.get_text() for p in soup.find_all('p')]
+ headings = [h.get_text() for h in soup.find_all(['h1', 
+'h2', 'h3'])]
+ 
+ # Combine and segment content
+ for para in paragraphs:
+ content_chunks.append(para)
+ metadata.append({"url": site, "type": 
+"paragraph"})
+ for head in headings:
+ content_chunks.append(head)
+ metadata.append({"url": site, "type": "heading"})
+# Generate embeddings
+model = SentenceTransformer('all-MiniLM-L6-v2')
+embeddings = model.encode(content_chunks)
+# Store in vector database
+dimension = embeddings.shape[1]
+index = faiss.IndexFlatL2(dimension)
+index.add(embeddings)
