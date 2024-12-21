@@ -1,0 +1,9 @@
+comparison_query = "Compare unemployment 
+rates for bachelor’s and master’s degrees."
+query_embedding = 
+model.encode([comparison_query])
+D, I = index.search(query_embedding, k=5)
+# Extract chunks and aggregate
+comparison_chunks = [chunks[i] for i in I[0]]
+# Use structured aggregation (e.g., parsing 
+numerical data) for better comparison.

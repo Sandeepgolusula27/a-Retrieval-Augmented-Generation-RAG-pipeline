@@ -1,0 +1,20 @@
+from PyPDF2 import PdfReader
+from sentence_transformers import 
+SentenceTransformer
+import faiss
+# Extract text from PDF
+reader = PdfReader("example.pdf")
+text = ""
+for page in reader.pages:
+ text += page.extract_text()
+# Split text into chunks
+chunks = text.split("\n\n") # Split by double 
+newline as a simple heuristic
+# Generate embeddings
+model = SentenceTransformer('all-MiniLM-L6-v2') 
+# Replace with your embedding model
+embeddings = model.encode(chunks)
+# Store in vector database (e.g., FAISS)
+dimension = embeddings.shape[1]
+index = faiss.IndexFlatL2(dimension)
+index.add(embeddings)

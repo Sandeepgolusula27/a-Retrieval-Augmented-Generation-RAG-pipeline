@@ -1,0 +1,4 @@
+import camelot
+tables = camelot.read_pdf("example.pdf", 
+pages="6")
+tables[0].to_csv("page6_table.csv")
